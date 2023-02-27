@@ -1,5 +1,6 @@
 from flask import request
 
+from dao.model.movie import Movie
 from dao.movie import MovieDAO
 
 
@@ -8,8 +9,17 @@ class MovieService:
     def __init__(self, dao: MovieDAO):
         self.dao = dao
 
-    def get_all(self):
-        return self.dao.get_all()
+    def get_all(self, genre, director, year):
+
+        movies = Movie.query
+        if director:
+            movies = movies.filter(Movie.director_id == director)
+        elif genre:
+            movies = movies.filter(Movie.genre_id == genre)
+        elif year:
+            movies = movies.filter(Movie.year == year)
+
+        return self.dao.get_all(movies)
 
     def get_one(self, mid):
         return self.dao.get_one(mid)

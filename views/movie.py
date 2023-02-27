@@ -12,18 +12,12 @@ movie_ns = Namespace('movies')
 class MoviesView(Resource):
 
     def get(self):
-        movies = Movie.query
+        genre = request.args.get('genre_id')
+        director = request.args.get('director_id')
+        year = request.args.get('year')
+        movies = movie_service.get_all(genre, director, year)
 
-        if genre_id := request.args.get('genre_id'):
-            movies = movies.filter(Movie.genre_id == genre_id)
-
-        elif director_id := request.args.get('director_id'):
-            movies = movies.filter(Movie.director_id == director_id)
-
-        elif year := request.args.get('year'):
-            movies = movies.filter(Movie.year == year)
-
-        return movies_schema.dump(movies.all()), 200#
+        return movies_schema.dump(movies), 200
 
     def post(self):
         data = request.json
